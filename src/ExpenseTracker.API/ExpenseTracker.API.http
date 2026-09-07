@@ -1,0 +1,49 @@
+@ExpenseTracker.API_HostAddress = http://localhost:5010
+
+GET {{ExpenseTracker.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+### Test Register Validation
+POST http://localhost:5010/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "phong",
+  "password": "12345678",
+  "fullName": "nguyen thanh phong",
+  "email": "phong@gmail.com"
+}
+
+### Login
+POST http://localhost:5010/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "phong",
+  "password": "12345678"
+}
+
+### Test JWT
+GET http://localhost:5010/api/auth-test
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidW5pcXVlX25hbWUiOiJwaG9uZyIsImVtYWlsIjoicGhvbmdAZ21haWwuY29tIiwianRpIjoiZTc1ZGQ1MjkyZDg3NDM2OWJlZTQzZjQ2NzcwMzgzZTIiLCJpYXQiOjE3ODgxNjA4MzEsIm5iZiI6MTc4ODE2MDgzMSwiZXhwIjoxNzg4MTYxNzMxLCJpc3MiOiJFeHBlbnNlVHJhY2tlci5BUEkiLCJhdWQiOiJFeHBlbnNlVHJhY2tlci5BbmRyb2lkIn0.jfZZ9cA0AUsFKGpMDJ3jrFZEoTlh_ysR-uID-lJ1_lM
+
+### Refresh Token
+POST http://localhost:5010/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "y4EOynH9AnvC3EepUdItcg76Xumr0jJKfIWm8XcQ1ME2cZp4VtzKJhBBpqIJq7uDByga7UJlNTL6UD/1LFWUpQ=="
+}
+
+### Logout
+POST http://localhost:5010/api/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidW5pcXVlX25hbWUiOiJwaG9uZyIsImVtYWlsIjoicGhvbmdAZ21haWwuY29tIiwianRpIjoiMDM4NjQxYTQ4NGY2NGJkODljZDcwYmU4NzcxNDU2NzkiLCJpYXQiOjE3ODgxNjA5MDUsIm5iZiI6MTc4ODE2MDkwNSwiZXhwIjoxNzg4MTYxODA1LCJpc3MiOiJFeHBlbnNlVHJhY2tlci5BUEkiLCJhdWQiOiJFeHBlbnNlVHJhY2tlci5BbmRyb2lkIn0.D5XFSJJ_o4dSGhqMpWN61ye_991CjR0g-F1gQHUwBzM
+Content-Type: application/json
+
+{
+  "refreshToken": "lwxxkXvdzB9UaJgj+bEau4A4jlt7v5T5yPBhndOqlxyu+QzQWIfna5J+0iDabng+K98KQqlnZ9Kd0DxnXNcwEA=="
+}
+
+### Test revoked access token
+GET http://localhost:5010/api/auth-test
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidW5pcXVlX25hbWUiOiJwaG9uZyIsImVtYWlsIjoicGhvbmdAZ21haWwuY29tIiwianRpIjoiMDM4NjQxYTQ4NGY2NGJkODljZDcwYmU4NzcxNDU2NzkiLCJpYXQiOjE3ODgxNjA5MDUsIm5iZiI6MTc4ODE2MDkwNSwiZXhwIjoxNzg4MTYxODA1LCJpc3MiOiJFeHBlbnNlVHJhY2tlci5BUEkiLCJhdWQiOiJFeHBlbnNlVHJhY2tlci5BbmRyb2lkIn0.D5XFSJJ_o4dSGhqMpWN61ye_991CjR0g-F1gQHUwBzM

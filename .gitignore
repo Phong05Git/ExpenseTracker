@@ -1,0 +1,30 @@
+﻿# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.userprefs
+
+# Build
+**/bin/
+**/obj/
+
+# Test
+**/TestResults/
+
+# ASP.NET
+*.Development.json
+secrets.json
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
