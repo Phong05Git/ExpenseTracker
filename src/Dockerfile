@@ -1,18 +1,18 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY ExpenseTracker.API/ExpenseTracker.API.csproj ExpenseTracker.API/
-COPY ExpenseTracker.Application/ExpenseTracker.Application.csproj ExpenseTracker.Application/
-COPY ExpenseTracker.Domain/ExpenseTracker.Domain.csproj ExpenseTracker.Domain/
-COPY ExpenseTracker.Infrastructure/ExpenseTracker.Infrastructure.csproj ExpenseTracker.Infrastructure/
+COPY src/ExpenseTracker.API/ExpenseTracker.API.csproj src/ExpenseTracker.API/
+COPY src/ExpenseTracker.Application/ExpenseTracker.Application.csproj src/ExpenseTracker.Application/
+COPY src/ExpenseTracker.Domain/ExpenseTracker.Domain.csproj src/ExpenseTracker.Domain/
+COPY src/ExpenseTracker.Infrastructure/ExpenseTracker.Infrastructure.csproj src/ExpenseTracker.Infrastructure/
 
-RUN dotnet restore ExpenseTracker.API/ExpenseTracker.API.csproj
+RUN dotnet restore src/ExpenseTracker.API/ExpenseTracker.API.csproj
 
 COPY . .
 
-RUN dotnet publish ExpenseTracker.API/ExpenseTracker.API.csproj -c Release -o /app/publish --no-restore
+RUN dotnet publish src/ExpenseTracker.API/ExpenseTracker.API.csproj -c Release -o /app/publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
 ENV ASPNETCORE_ENVIRONMENT=Production
