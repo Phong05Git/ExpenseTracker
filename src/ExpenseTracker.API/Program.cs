@@ -12,10 +12,10 @@ using ExpenseTracker.Infrastructure;
 using ExpenseTracker.Infrastructure.Authentication;
 using ExpenseTracker.Infrastructure.Security.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +82,7 @@ builder.Services.AddAuthorization(options =>
         .RequireAuthenticatedUser()
         .Build();
 });
+
 builder.Services.AddProblemDetails();
 
 builder.Services.AddControllers(options =>
@@ -188,14 +189,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
-
-//app.UseRouting();
-
 app.UseAuthentication();
 app.UseRateLimiter();
 app.UseMiddleware<SessionActivityMiddleware>();
 app.UseAuthorization();
+
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "Healthy"
+})).AllowAnonymous();
 
 app.MapControllers();
 
