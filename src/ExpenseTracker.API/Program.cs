@@ -10,10 +10,12 @@ using ExpenseTracker.Application;
 using ExpenseTracker.Application.Interfaces;
 using ExpenseTracker.Infrastructure;
 using ExpenseTracker.Infrastructure.Authentication;
+using ExpenseTracker.Infrastructure.Persistence;
 using ExpenseTracker.Infrastructure.Security.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
@@ -179,6 +181,14 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<ApplicationDbContext>();
+
+    dbContext.Database.Migrate();
+}
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
