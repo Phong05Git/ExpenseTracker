@@ -54,6 +54,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
 
         services.AddSingleton(jwtSettings);
+        services.AddSingleton<IJwtTokenSettings>(jwtSettings);
         services.AddSingleton<JwtTokenGenerator>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<ITokenBlacklistService, TokenBlacklistService>();

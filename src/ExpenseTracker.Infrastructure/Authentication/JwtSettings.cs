@@ -1,6 +1,8 @@
-﻿namespace ExpenseTracker.Infrastructure.Authentication;
+﻿using ExpenseTracker.Application.Interfaces;
 
-public class JwtSettings
+namespace ExpenseTracker.Infrastructure.Authentication;
+
+public class JwtSettings : IJwtTokenSettings
 {
     public string SecretKey { get; set; } = string.Empty;
     public string Issuer { get; set; } = string.Empty;
