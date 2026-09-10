@@ -8,9 +8,11 @@ public class LoginRequestValidator : AbstractValidator<LoginRequestDto>
     public LoginRequestValidator()
     {
         RuleFor(x => x.Username)
-            .NotEmpty();
+            .NotEmpty()
+            .Length(3, 50);
 
         RuleFor(x => x.Password)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(100);
     }
 }

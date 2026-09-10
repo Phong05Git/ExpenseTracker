@@ -1,5 +1,5 @@
-﻿using ExpenseTracker.Application.DTOs.Transactions;
-using FluentValidation;
+﻿using FluentValidation;
+using ExpenseTracker.Application.DTOs.Transactions;
 
 namespace ExpenseTracker.Application.Validators;
 

@@ -8,7 +8,8 @@ public class ChangePasswordValidator : AbstractValidator<ChangePasswordRequestDt
     public ChangePasswordValidator()
     {
         RuleFor(x => x.CurrentPassword)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(100);
 
         PasswordValidator
             .ApplyPasswordRules(RuleFor(x => x.NewPassword));

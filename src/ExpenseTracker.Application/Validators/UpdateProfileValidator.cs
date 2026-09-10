@@ -9,7 +9,9 @@ public class UpdateProfileValidator : AbstractValidator<UpdateProfileDto>
     {
         RuleFor(x => x.FullName)
             .NotEmpty()
-            .MaximumLength(100);
+            .MaximumLength(100)
+            .Must(x => !string.IsNullOrWhiteSpace(x))
+            .WithMessage("Full name is required.");
 
         RuleFor(x => x.Email)
             .NotEmpty()
