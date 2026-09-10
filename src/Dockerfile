@@ -21,4 +21,4 @@ COPY --from=build /app/publish .
 
 USER $APP_UID
 
-CMD ["sh", "-c", "dotnet ExpenseTracker.API.dll --urls [http://0.0.0.0:${PORT:-10000](http://0.0.0.0:${PORT:-10000)}"]
+ENTRYPOINT ["dotnet", "ExpenseTracker.API.dll"]
