@@ -19,4 +19,6 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 COPY --from=build /app/publish .
 
-CMD ["sh", "-c", "dotnet ExpenseTracker.API.dll --urls http://0.0.0.0:${PORT:-10000}"]
+USER $APP_UID
+
+CMD ["sh", "-c", "dotnet ExpenseTracker.API.dll --urls [http://0.0.0.0:${PORT:-10000](http://0.0.0.0:${PORT:-10000)}"]
