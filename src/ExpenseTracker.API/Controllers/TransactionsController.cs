@@ -68,11 +68,13 @@ public class TransactionsController(
             {
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
-                    ApiResponseDto<TransactionDto>.Fail(result.Error));
+                    ApiResponseDto<TransactionDto>.Fail(
+                        "Unable to use the specified category."));
             }
 
             return BadRequest(
-                ApiResponseDto<TransactionDto>.Fail(result.Error!));
+                ApiResponseDto<TransactionDto>.Fail(
+                    "Unable to create transaction."));
         }
 
         return Created(
@@ -101,7 +103,7 @@ public class TransactionsController(
             {
                 return NotFound(
                     ApiResponseDto<TransactionDto>.Fail(
-                        result.Error));
+                        "Transaction not found."));
             }
 
             if (result.Error == "Access denied.")
@@ -109,7 +111,7 @@ public class TransactionsController(
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
                     ApiResponseDto<TransactionDto>.Fail(
-                        result.Error));
+                        "Access denied."));
             }
 
             if (result.Error == "Category not found or access denied.")
@@ -117,12 +119,12 @@ public class TransactionsController(
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
                     ApiResponseDto<TransactionDto>.Fail(
-                        result.Error));
+                        "Unable to use the specified category."));
             }
 
             return BadRequest(
                 ApiResponseDto<TransactionDto>.Fail(
-                    result.Error!));
+                    "Unable to update transaction."));
         }
 
         return Ok(
@@ -147,18 +149,21 @@ public class TransactionsController(
             if (result.Error == "Transaction not found.")
             {
                 return NotFound(
-                    ApiResponseDto<object>.Fail(result.Error));
+                    ApiResponseDto<object>.Fail(
+                        "Transaction not found."));
             }
 
             if (result.Error == "Access denied.")
             {
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
-                    ApiResponseDto<object>.Fail(result.Error));
+                    ApiResponseDto<object>.Fail(
+                        "Access denied."));
             }
 
             return BadRequest(
-                ApiResponseDto<object>.Fail(result.Error!));
+                ApiResponseDto<object>.Fail(
+                    "Unable to delete transaction."));
         }
 
         return NoContent();

@@ -46,7 +46,6 @@ public class CategoriesController(
         {
             return Conflict(
                 ApiResponseDto<CategoryDto>.Fail(
-                    result.Error ??
                     "Unable to create category."));
         }
 
@@ -77,7 +76,7 @@ public class CategoriesController(
             {
                 return NotFound(
                     ApiResponseDto<CategoryDto>.Fail(
-                        result.Error));
+                        "Category not found."));
             }
 
             if (result.Error == "Access denied.")
@@ -85,12 +84,11 @@ public class CategoriesController(
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
                     ApiResponseDto<CategoryDto>.Fail(
-                        result.Error));
+                        "Access denied."));
             }
 
             return Conflict(
                 ApiResponseDto<CategoryDto>.Fail(
-                    result.Error ??
                     "Unable to update category."));
         }
 
@@ -118,7 +116,7 @@ public class CategoriesController(
             {
                 return NotFound(
                     ApiResponseDto<object>.Fail(
-                        result.Error));
+                        "Category not found."));
             }
 
             if (result.Error == "Access denied.")
@@ -126,12 +124,11 @@ public class CategoriesController(
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
                     ApiResponseDto<object>.Fail(
-                        result.Error));
+                        "Access denied."));
             }
 
             return Conflict(
                 ApiResponseDto<object>.Fail(
-                    result.Error ??
                     "Unable to delete category."));
         }
 

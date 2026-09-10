@@ -48,11 +48,13 @@ public class BudgetsController(
             {
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
-                    ApiResponseDto<BudgetDto>.Fail(result.Error));
+                    ApiResponseDto<BudgetDto>.Fail(
+                        "Unable to use the specified category."));
             }
 
             return Conflict(
-                ApiResponseDto<BudgetDto>.Fail(result.Error!));
+                ApiResponseDto<BudgetDto>.Fail(
+                    "Unable to create budget."));
         }
 
         return Created(
@@ -80,24 +82,28 @@ public class BudgetsController(
             if (result.Error == "Budget not found.")
             {
                 return NotFound(
-                    ApiResponseDto<BudgetDto>.Fail(result.Error));
+                    ApiResponseDto<BudgetDto>.Fail(
+                        "Budget not found."));
             }
 
             if (result.Error == "Access denied.")
             {
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
-                    ApiResponseDto<BudgetDto>.Fail(result.Error));
+                    ApiResponseDto<BudgetDto>.Fail(
+                        "Access denied."));
             }
 
             if (result.Error == "Budget already exists for this category and period.")
             {
                 return Conflict(
-                    ApiResponseDto<BudgetDto>.Fail(result.Error));
+                    ApiResponseDto<BudgetDto>.Fail(
+                        "A budget already exists for this category and period."));
             }
 
             return BadRequest(
-                ApiResponseDto<BudgetDto>.Fail(result.Error!));
+                ApiResponseDto<BudgetDto>.Fail(
+                    "Unable to update budget."));
         }
 
         return Ok(
@@ -122,18 +128,21 @@ public class BudgetsController(
             if (result.Error == "Budget not found.")
             {
                 return NotFound(
-                    ApiResponseDto<object>.Fail(result.Error));
+                    ApiResponseDto<object>.Fail(
+                        "Budget not found."));
             }
 
             if (result.Error == "Access denied.")
             {
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
-                    ApiResponseDto<object>.Fail(result.Error));
+                    ApiResponseDto<object>.Fail(
+                        "Access denied."));
             }
 
             return BadRequest(
-                ApiResponseDto<object>.Fail(result.Error!));
+                ApiResponseDto<object>.Fail(
+                    "Unable to delete budget."));
         }
 
         return NoContent();

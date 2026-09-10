@@ -30,7 +30,7 @@ public class UsersController(
         {
             return NotFound(
                 ApiResponseDto<UserProfileDto>.Fail(
-                    result.Error!));
+                    "User profile not found."));
         }
 
         return Ok(
@@ -57,12 +57,12 @@ public class UsersController(
             {
                 return NotFound(
                     ApiResponseDto<UserProfileDto>.Fail(
-                        result.Error));
+                        "User profile not found."));
             }
 
             return Conflict(
                 ApiResponseDto<UserProfileDto>.Fail(
-                    result.Error!));
+                    "Unable to update profile."));
         }
 
         return Ok(
@@ -98,12 +98,12 @@ public class UsersController(
             {
                 return NotFound(
                     ApiResponseDto<object>.Fail(
-                        result.Error));
+                        "User profile not found."));
             }
 
             return BadRequest(
                 ApiResponseDto<object>.Fail(
-                    result.Error!));
+                    "Unable to change password."));
         }
 
         return NoContent();
