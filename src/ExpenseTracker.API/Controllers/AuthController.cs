@@ -26,7 +26,7 @@ public class AuthController(
 
         if (!result.IsSuccess)
             return Conflict(
-                new { message = result.Error });
+                new { message = "Unable to create the account." });
 
         return Ok(result.Data);
     }
@@ -43,7 +43,7 @@ public class AuthController(
 
         if (!result.IsSuccess)
             return Unauthorized(
-                new { message = result.Error });
+                new { message = "Invalid username or password." });
 
         return Ok(result.Data);
     }
@@ -60,7 +60,7 @@ public class AuthController(
 
         if (!result.IsSuccess)
             return Unauthorized(
-                new { message = result.Error });
+                new { message = "Invalid or expired refresh token." });
 
         return Ok(result.Data);
     }
@@ -85,7 +85,7 @@ public class AuthController(
 
         if (!result.IsSuccess)
             return BadRequest(
-                new { message = result.Error });
+                new { message = "Unable to complete logout." });
 
         return NoContent();
     }
