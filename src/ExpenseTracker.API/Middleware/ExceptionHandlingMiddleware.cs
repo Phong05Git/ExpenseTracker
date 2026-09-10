@@ -15,27 +15,45 @@ public class ExceptionHandlingMiddleware(
         }
         catch (NotFoundException ex)
         {
+            logger.LogWarning(
+                ex,
+                "Resource not found while processing {Method} {Path}.",
+                context.Request.Method,
+                context.Request.Path);
+
             await WriteProblemDetailsAsync(
                 context,
                 StatusCodes.Status404NotFound,
                 "Resource not found.",
-                ex.Message);
+                "The requested resource was not found.");
         }
         catch (ValidationException ex)
         {
+            logger.LogWarning(
+                ex,
+                "Validation exception while processing {Method} {Path}.",
+                context.Request.Method,
+                context.Request.Path);
+
             await WriteProblemDetailsAsync(
                 context,
                 StatusCodes.Status400BadRequest,
                 "Validation failed.",
-                ex.Message);
+                "The request contains invalid data.");
         }
         catch (DomainExceptions ex)
         {
+            logger.LogWarning(
+                ex,
+                "Business rule violation while processing {Method} {Path}.",
+                context.Request.Method,
+                context.Request.Path);
+
             await WriteProblemDetailsAsync(
                 context,
                 StatusCodes.Status400BadRequest,
                 "Business rule violation.",
-                ex.Message);
+                "The request could not be completed because it violates a business rule.");
         }
         catch (Exception ex)
         {
@@ -75,5 +93,4 @@ public class ExceptionHandlingMiddleware(
 
         await context.Response.WriteAsJsonAsync(problemDetails);
     }
-
 }

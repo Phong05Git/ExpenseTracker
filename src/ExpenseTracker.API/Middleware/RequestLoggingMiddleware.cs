@@ -18,23 +18,40 @@ public class RequestLoggingMiddleware(
         {
             stopwatch.Stop();
 
-            var userId = context.User
-                             .FindFirst("sub")
-                             ?.Value
-                         ?? "anonymous";
+            var userId =
+                context.User.FindFirst("sub")?.Value
+                ?? "anonymous";
 
             var ipAddress =
                 context.Connection.RemoteIpAddress?.ToString()
                 ?? "unknown";
 
-            logger.LogInformation(
-                "HTTP {Method} {Path} responded {StatusCode} in {ElapsedMs} ms. UserId={UserId}, IP={IpAddress}",
-                context.Request.Method,
-                context.Request.Path,
-                context.Response.StatusCode,
-                stopwatch.ElapsedMilliseconds,
-                userId,
-                ipAddress);
+            var statusCode = context.Response.StatusCode;
+
+            if (statusCode == StatusCodes.Status401Unauthorized ||
+                statusCode == StatusCodes.Status403Forbidden ||
+                statusCode == StatusCodes.Status429TooManyRequests)
+            {
+                logger.LogWarning(
+                    "Security-related HTTP response {Method} {Path} responded {StatusCode} in {ElapsedMs} ms. UserId={UserId}, IP={IpAddress}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    statusCode,
+                    stopwatch.ElapsedMilliseconds,
+                    userId,
+                    ipAddress);
+            }
+            else
+            {
+                logger.LogInformation(
+                    "HTTP {Method} {Path} responded {StatusCode} in {ElapsedMs} ms. UserId={UserId}, IP={IpAddress}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    statusCode,
+                    stopwatch.ElapsedMilliseconds,
+                    userId,
+                    ipAddress);
+            }
         }
     }
 }
