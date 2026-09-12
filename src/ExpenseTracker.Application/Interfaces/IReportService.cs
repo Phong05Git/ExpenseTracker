@@ -15,5 +15,7 @@ public interface IReportService
         int userId,
         PeriodType period,
         DateTimeOffset referenceDate,
+        DateTimeOffset? startDate,
+        DateTimeOffset? endDate,
         CancellationToken cancellationToken = default);
 }

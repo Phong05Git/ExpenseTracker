@@ -48,29 +48,59 @@ public class ReportService(
         int userId,
         PeriodType period,
         DateTimeOffset referenceDate,
+        DateTimeOffset? startDate,
+        DateTimeOffset? endDate,
         CancellationToken cancellationToken = default)
     {
-        var (startDate, endDate) = GetPeriodRange(period, referenceDate);
+        var isCustomRange =
+            startDate.HasValue &&
+            endDate.HasValue;
+
+        DateTime rangeStartDate;
+        DateTime rangeEndDate;
+        DateTime responseEndDate;
+
+        if (isCustomRange)
+        {
+            rangeStartDate = DateTime.SpecifyKind(
+                startDate!.Value.UtcDateTime.Date,
+                DateTimeKind.Utc);
+
+            var customEndDate = endDate!.Value.UtcDateTime.Date;
+
+            rangeEndDate = DateTime.SpecifyKind(
+                customEndDate.AddDays(1),
+                DateTimeKind.Utc);
+
+            responseEndDate = rangeEndDate.AddDays(-1);
+        }
+        else
+        {
+            (rangeStartDate, rangeEndDate) =
+                GetPeriodRange(period, referenceDate);
+
+            responseEndDate = rangeEndDate;
+        }
 
         var totals = await statisticsRepository.GetTotalsAsync(
             userId,
-            startDate,
-            endDate,
+            rangeStartDate,
+            rangeEndDate,
             cancellationToken);
 
         var expenseCategoryBreakdown =
             await statisticsRepository.GetCategoryBreakdownAsync(
                 userId,
-                startDate,
-                endDate,
+                rangeStartDate,
+                rangeEndDate,
                 TransactionType.Expense,
                 cancellationToken);
 
         var incomeCategoryBreakdown =
             await statisticsRepository.GetCategoryBreakdownAsync(
                 userId,
-                startDate,
-                endDate,
+                rangeStartDate,
+                rangeEndDate,
                 TransactionType.Income,
                 cancellationToken);
 
@@ -107,28 +137,33 @@ public class ReportService(
             })
             .ToList();
 
-        var timeline = period == PeriodType.Year
+        var timeline = period == PeriodType.Year && !isCustomRange
             ? await statisticsRepository.GetMonthlyStatisticsAsync(
                 userId,
-                startDate,
-                endDate,
+                rangeStartDate,
+                rangeEndDate,
                 cancellationToken)
             : await statisticsRepository.GetDailyStatisticsAsync(
                 userId,
-                startDate,
-                endDate,
+                rangeStartDate,
+                rangeEndDate,
                 cancellationToken);
 
-        var timelineResult = BuildTimeline(
-            period,
-            startDate,
-            timeline);
+        var timelineResult = isCustomRange
+            ? BuildCustomTimeline(
+                rangeStartDate,
+                rangeEndDate,
+                timeline)
+            : BuildTimeline(
+                period,
+                rangeStartDate,
+                timeline);
 
         var result = new StatisticsDto
         {
             Period = period,
-            StartDate = startDate,
-            EndDate = endDate,
+            StartDate = rangeStartDate,
+            EndDate = responseEndDate,
             TotalIncome = totals.TotalIncome,
             TotalExpense = totals.TotalExpense,
             Timeline = timelineResult,
@@ -150,19 +185,29 @@ public class ReportService(
             PeriodType.Week => GetWeekRange(date),
             PeriodType.Month => GetMonthRange(date),
             PeriodType.Year => GetYearRange(date),
-            _ => throw new ArgumentOutOfRangeException(nameof(period), period, null)
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(period),
+                period,
+                null)
         };
     }
 
     private static (DateTime StartDate, DateTime EndDate) GetWeekRange(
         DateTime date)
     {
-        var daysFromMonday = ((int)date.DayOfWeek + 6) % 7;
-        var startDate = date.AddDays(-daysFromMonday);
+        var daysFromMonday =
+            ((int)date.DayOfWeek + 6) % 7;
+
+        var startDate =
+            date.AddDays(-daysFromMonday);
 
         return (
-            DateTime.SpecifyKind(startDate, DateTimeKind.Utc),
-            DateTime.SpecifyKind(startDate.AddDays(7), DateTimeKind.Utc));
+            DateTime.SpecifyKind(
+                startDate,
+                DateTimeKind.Utc),
+            DateTime.SpecifyKind(
+                startDate.AddDays(7),
+                DateTimeKind.Utc));
     }
 
     private static (DateTime StartDate, DateTime EndDate) GetMonthRange(
@@ -215,7 +260,10 @@ public class ReportService(
             for (var month = 0; month < 12; month++)
             {
                 var date = startDate.AddMonths(month);
-                lookup.TryGetValue(date, out var value);
+
+                lookup.TryGetValue(
+                    date,
+                    out var value);
 
                 points.Add(new StatisticsPointDto
                 {
@@ -228,16 +276,51 @@ public class ReportService(
             return points;
         }
 
-        var numberOfDays = period == PeriodType.Week
-            ? 7
-            : DateTime.DaysInMonth(
-                startDate.Year,
-                startDate.Month);
+        var numberOfDays =
+            period == PeriodType.Week
+                ? 7
+                : DateTime.DaysInMonth(
+                    startDate.Year,
+                    startDate.Month);
 
         for (var day = 0; day < numberOfDays; day++)
         {
-            var date = startDate.AddDays(day);
-            lookup.TryGetValue(date, out var value);
+            var date =
+                startDate.AddDays(day);
+
+            lookup.TryGetValue(
+                date,
+                out var value);
+
+            points.Add(new StatisticsPointDto
+            {
+                Date = date,
+                Income = value.Income,
+                Expense = value.Expense
+            });
+        }
+
+        return points;
+    }
+
+    private static IReadOnlyList<StatisticsPointDto> BuildCustomTimeline(
+        DateTime startDate,
+        DateTime endDate,
+        IReadOnlyList<(DateTime Date, decimal Income, decimal Expense)> data)
+    {
+        var lookup = data.ToDictionary(
+            x => x.Date,
+            x => (x.Income, x.Expense));
+
+        var points = new List<StatisticsPointDto>();
+
+        for (var date = startDate;
+             date < endDate;
+             date = date.AddDays(1))
+        {
+            lookup.TryGetValue(
+                date,
+                out var value);
 
             points.Add(new StatisticsPointDto
             {

@@ -38,10 +38,28 @@ public class ReportsController(
     public async Task<IActionResult> GetStatistics(
         [FromQuery] PeriodType period,
         [FromQuery] DateTimeOffset? referenceDate,
+        [FromQuery] DateTimeOffset? startDate,
+        [FromQuery] DateTimeOffset? endDate,
         CancellationToken cancellationToken)
     {
         if (!currentUserService.UserId.HasValue)
             return Unauthorized();
+
+        if (startDate.HasValue != endDate.HasValue)
+        {
+            return BadRequest(
+                ApiResponseDto<StatisticsDto>.Fail(
+                    "Khoảng thời gian không hợp lệ."));
+        }
+
+        if (startDate.HasValue &&
+            startDate.Value.UtcDateTime.Date >
+            endDate!.Value.UtcDateTime.Date)
+        {
+            return BadRequest(
+                ApiResponseDto<StatisticsDto>.Fail(
+                    "Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc."));
+        }
 
         var date = referenceDate ?? DateTimeOffset.UtcNow;
 
@@ -49,6 +67,8 @@ public class ReportsController(
             currentUserService.UserId.Value,
             period,
             date,
+            startDate,
+            endDate,
             cancellationToken);
 
         return Ok(
