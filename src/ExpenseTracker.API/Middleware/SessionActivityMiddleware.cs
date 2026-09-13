@@ -11,7 +11,7 @@ public class SessionActivityMiddleware(
     IConfiguration configuration)
 {
     private static readonly TimeSpan DefaultIdleTimeout =
-        TimeSpan.FromMinutes(30);
+        TimeSpan.FromMinutes(15);
 
     private static readonly TimeSpan DefaultActivityUpdateInterval =
         TimeSpan.FromMinutes(1);
