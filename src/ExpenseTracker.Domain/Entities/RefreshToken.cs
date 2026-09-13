@@ -1,4 +1,6 @@
-﻿using ExpenseTracker.Domain.Common;
+﻿using System.Security.Cryptography;
+using System.Text;
+using ExpenseTracker.Domain.Common;
 
 namespace ExpenseTracker.Domain.Entities;
 
@@ -6,6 +8,7 @@ public class RefreshToken : BaseEntity
 {
     public int UserId { get; private set; }
     public string Token { get; private set; } = string.Empty;
+    public string TokenHash { get; private set; } = string.Empty;
     public DateTime ExpiresAt { get; private set; }
     public DateTime? RevokedAt { get; private set; }
     public DateTime LastActivityAt { get; private set; }
@@ -23,6 +26,7 @@ public class RefreshToken : BaseEntity
     {
         UserId = userId;
         Token = token;
+        TokenHash = ComputeHash(token);
         ExpiresAt = DateTime.SpecifyKind(
             expiresAt,
             DateTimeKind.Utc);
@@ -45,5 +49,13 @@ public class RefreshToken : BaseEntity
         LastActivityAt = DateTime.SpecifyKind(
             activityAt,
             DateTimeKind.Utc);
+    }
+
+    public static string ComputeHash(string token)
+    {
+        var bytes = Encoding.UTF8.GetBytes(token);
+        var hash = SHA256.HashData(bytes);
+
+        return Convert.ToHexString(hash);
     }
 }

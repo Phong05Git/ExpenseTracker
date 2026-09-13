@@ -11,9 +11,11 @@ public class RefreshTokenRepository(ApplicationDbContext context)
         string token,
         CancellationToken cancellationToken = default)
     {
+        var tokenHash = RefreshToken.ComputeHash(token);
+
         return await DbSet
             .FirstOrDefaultAsync(
-                x => x.Token == token,
+                x => x.TokenHash == tokenHash,
                 cancellationToken);
     }
 
@@ -36,7 +38,7 @@ public class RefreshTokenRepository(ApplicationDbContext context)
         var tokens = await GetActiveByUserIdAsync(
             userId,
             cancellationToken);
-        
+
         foreach (var token in tokens)
             token.Revoke();
 
