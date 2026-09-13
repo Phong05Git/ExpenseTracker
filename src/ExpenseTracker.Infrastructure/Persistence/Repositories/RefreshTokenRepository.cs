@@ -36,9 +36,7 @@ public class RefreshTokenRepository(ApplicationDbContext context)
         var tokens = await GetActiveByUserIdAsync(
             userId,
             cancellationToken);
-
-        var revokedAt = DateTime.UtcNow;
-
+        
         foreach (var token in tokens)
             token.Revoke();
 
