@@ -1,4 +1,4 @@
-﻿using ExpenseTracker.Application.Interfaces;
+using ExpenseTracker.Application.Interfaces;
 using ExpenseTracker.Application.Services;
 using ExpenseTracker.Domain.Interfaces;
 using ExpenseTracker.Infrastructure.Authentication;
@@ -38,6 +38,8 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
+        services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
@@ -52,6 +54,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IBudgetService, BudgetService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IChatService, ChatService>();
 
         services.AddSingleton(jwtSettings);
         services.AddSingleton<IJwtTokenSettings>(jwtSettings);
