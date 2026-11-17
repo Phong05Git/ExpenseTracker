@@ -1,4 +1,4 @@
-﻿using System.Net.NetworkInformation;
+using System.Net.NetworkInformation;
 using System.Transactions;
 using ExpenseTracker.Domain.Common;
 
@@ -10,6 +10,7 @@ public class User : BaseEntity
     public ICollection<Transaction> Transactions { get; private set; } = new List<Transaction>();
     public ICollection<Budget> Budgets { get; private set; } = new List<Budget>();
     public ICollection<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
+    public ICollection<ChatSession> ChatSessions { get; private set; } = new List<ChatSession>();
     
     public string Username { get; private set; } = string.Empty;
     public string PasswordHash { get; private set; } = string.Empty;
