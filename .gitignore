@@ -28,3 +28,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Source code backup archive
+/ExpenseTracker_Backend.zip
+
+.md
