@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using ExpenseTracker.Application.DTOs.Auth;
+using ExpenseTracker.Application.Common;
 
 namespace ExpenseTracker.Application.Validators;
 
@@ -13,6 +14,7 @@ public class LoginRequestValidator : AbstractValidator<LoginRequestDto>
 
         RuleFor(x => x.Password)
             .NotEmpty()
-            .MaximumLength(100);
+            .Must(PasswordByteLimit.IsValid)
+            .WithMessage(PasswordByteLimit.ErrorMessage);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 
+using ExpenseTracker.Application.Common;
+
 namespace ExpenseTracker.Application.Validators;
 
 public static class PasswordValidator
@@ -10,7 +12,8 @@ public static class PasswordValidator
         return ruleBuilder
             .NotEmpty()
             .MinimumLength(8)
-            .MaximumLength(100)
+            .Must(PasswordByteLimit.IsValid)
+            .WithMessage(PasswordByteLimit.ErrorMessage)
             .Matches("[a-z]")
             .WithMessage("Password must contain at least one lowercase letter.")
             .Matches("[A-Z]")

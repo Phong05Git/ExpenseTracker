@@ -23,6 +23,9 @@ public async Task<Result<AuthResponseDto>> RegisterAsync(
     RegisterRequestDto request,
     CancellationToken cancellationToken = default)
 {
+    if (!PasswordByteLimit.IsValid(request.Password))
+        return Result<AuthResponseDto>.Failure(PasswordByteLimit.ErrorMessage);
+
     var username = request.Username.Trim();
     var email = request.Email.Trim().ToLowerInvariant();
 
@@ -54,6 +57,9 @@ public async Task<Result<AuthResponseDto>> LoginAsync(
     LoginRequestDto request,
     CancellationToken cancellationToken = default)
 {
+    if (!PasswordByteLimit.IsValid(request.Password))
+        return Result<AuthResponseDto>.Failure("Invalid username or password.");
+
     var username = request.Username.Trim();
 
     var user = await userRepository.GetByUsernameAsync(username, cancellationToken);
@@ -145,6 +151,12 @@ public async Task<Result> ChangePasswordAsync(
     string? accessToken,
     CancellationToken cancellationToken = default)
 {
+    if (!PasswordByteLimit.IsValid(request.CurrentPassword))
+        return Result.Failure("Current password is incorrect.");
+
+    if (!PasswordByteLimit.IsValid(request.NewPassword))
+        return Result.Failure(PasswordByteLimit.ErrorMessage);
+
     var user = await userRepository.GetByIdAsync(
         userId,
         cancellationToken);
